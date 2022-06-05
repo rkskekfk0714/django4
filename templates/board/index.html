@@ -1,0 +1,118 @@
+{% extends 'base.html'%}
+{% block auth %}
+    {% load mathfilters %}
+
+
+    <div class="container mt-5 mb-5">
+
+        <h1><b>게시판</b></h1>
+
+        <div class="text-end">
+            <a class="btn btn-dark" href="{% url 'board:create' %}">CREATE </a>
+        </div>
+        
+        <table class="table table-hover mt-5" >
+            <thead style="background-color: black; color: white;" class="text-center">
+              <tr>
+                <th scope="col">NO</th>
+                <th scope="col">SUBJECT</th>
+                <th scope="col">SUMMARY</th>
+                <th scope="col">WRITER</th>
+                <th scope="col">LIKEY</th>
+              </tr>
+            </thead>
+            {% if bset %}
+                {% for i in bset %}
+                    <tbody>
+                        <tr>
+                            <th scope="row">{{ bset.start_index|add:forloop.counter0 }}</th>
+                            <td><a class="sub" href="{% url 'board:detail' i.id %}">{{ i.subject }}</a>{% if i.hot %} ♬ {% endif %}</td>
+                            <td>{{ i.summary }}</td>
+                            <td>{{ i.writer }}</td>
+                            <td>{{ i.likey.count }}</td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
+            {% else %}            
+                {% if tex %}
+                    <tr>
+                        <th colspan="5"><h3><b>검색결과가 없습니다.</b></h3></th>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <th colspan="5"><h3><b>첫번째 게시글을 작성해주세요.</b></h3></th>
+                    </tr>
+                {% endif %}
+                    
+            {% endif %}
+        </table>
+          
+        <nav aria-label="Page navigation example" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if bset.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'board:index' %}?page={{bset.previous_page_number}}&tex={{tex}}&sel={{sel}}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for i in bset.paginator.page_range %}
+                    {% if i >= bset.number|sub:5 and i <= bset.number|add:4 %}
+                        <li class="page-item"><a class="page-link" href="{% url 'board:index' %}?page={{i}}&tex={{tex}}&sel={{sel}}" {% if i == bset.number %} style="background-color: black; color: white;" {% endif %}>{{i}}</a></li>
+                    {% endif %}
+                {% endfor %}
+    
+                {% if bset.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'board:index' %}?page={{bset.next_page_number}}&tex={{tex}}&sel={{sel}}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    
+        <form>
+            <div class="row mt-4"> 
+                <div class="col-lg-2">
+                    <select name="sel" class="form-select mb-3" aria-label=".form-select-lg example">
+                        <option value="tit" {% if sel == 'tit' %} selected {% endif %}>제목</option>
+                        <option value="wri" {% if sel == 'wri' %} selected {% endif %}>작성자</option>
+                        <option value="con" {% if sel == 'con' %} selected {% endif %}>내용</option>
+                    </select>
+                </div>
+                <div class="col-lg-8">
+                    <input type="text" name="tex" value="{{tex}}" class="form-control">
+                </div>
+                <div class="col-lg-2 text-center">
+                    <button class="btn btn-dark">검색</button>
+                    <a href="{% url 'board:index' %}" class="btn btn-dark">리셋</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        .sub {
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+        }
+        
+        .sub:hover {
+            color: red;
+        }
+    </style>
+
+
+    
+
+
+
+{% endblock %}

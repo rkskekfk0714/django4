@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block auth %}
+<!-- 
+    <div class="container mt-5 mb-5">
+        <div class="row mt-5">
+            <div class="col-lg-5">
+                <textarea name="h" style="height: 100%;"></textarea>
+            </div>
+            <div class="col-lg-5">
+                {% if dset %}    
+                    <select>
+                        {% for code, name in dset.items %}
+                            <option value="af">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                    <div>
+                        <a class="btn btn-dark" href="{% url 'trans:index' %}">번역</a>
+                    </div> 
+                    <select>
+                        {% for i in dset %}
+                            <option value="af_a">{{ i }}</option>
+                        {% endfor %}
+                    </select>                
+                {% endif %} -->
+
+
+    <div class="container mt-5 mb-5">
+        <h1><b>번역기</b></h1>
+
+        <!-- {{nd}} -->
+        
+        <form method="post" name="transForm">
+            {% csrf_token %}
+            <div class="row mt-5">
+                <div class="col-lg-5">
+                    <textarea name="bf" class="form-control" placeholder="번역할 문장을 입력하세요" style="height: 250px; font-size: 25px; font-weight: bold;">{{bf}}</textarea>
+                </div>
+                <div class="col-lg-2 text-center">
+                    <select name="sel1" class="form-select" size="4" aria-label="size 3 select example">
+                        {% for code, name in nd.items %}
+                            <option value="{{code}}" {% if fr %} {% if fr == code %} selected {% endif %} {% else %} {% if code == 'en' %} selected {% endif %} {% endif %}>{{ name|upper }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="button" onclick="trans()" class="btn btn-dark mt-3 mb-3">TRANS</button>
+
+                    <select name="sel2" class="form-select" size="4" aria-label="size 3 select example">
+
+                        {% for code, name in nd.items %}
+                            <option value="{{code}}" {% if to %} {% if to == code %} selected {% endif %} {% else %} {% if code == 'ko' %} selected {% endif %} {% endif %}>{{ name|upper }}</option>
+                        {% endfor %}
+                        
+                    </select>
+                </div>
+                <div class="col-lg-5">   
+                    <textarea class="form-control" disabled style="height: 250px; font-size: 25px; font-weight: bold;">{{af}}</textarea>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    
+    <script>
+        function trans(){
+            f = document.transForm;
+            if(!f.bf.value){
+                alert("번역할 텍스트를 입력하세요.");
+            }else if(f.sel1.value == f.sel2.value){
+                alert("서로 다른 언어를 선택해주세요.");
+            } else {
+                f.submit();
+            }
+        }
+    </script>
+    
+    
+    
+{% endblock %}
